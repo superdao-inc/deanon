@@ -1,0 +1,8 @@
+configVersion: 1
+project: superdao-deanon
+---
+image: deanon
+dockerfile: Dockerfile
+target: core
+args:
+  NPM_TOKEN: {{ env "NPM_TOKEN" }}

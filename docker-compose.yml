@@ -1,0 +1,33 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:2.13-2.8.1
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "topic-test-1:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  kafkaui:
+    restart: on-failure
+    image: 'docker.redpanda.com/vectorized/console:v2.2.0'
+    ports:
+      - '8686:8080'
+    environment:
+      - KAFKA_BROKERS=localhost:9092
+    extra_hosts:
+      - 'localhost:host-gateway'
+    depends_on:
+      kafka:
+        condition: service_started

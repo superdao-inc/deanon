@@ -1,0 +1,14 @@
+dist
+node_modules
+coverage
+.idea
+**/.DS_Store
+.pnpm-store
+.swc
+.helm/charts
+.helm/Chart.lock
+packages/core/local_devs
+
+**/wallets_ens.sql
+**/wallets_meta.sql
+**/wallets_to_hardcode.csv

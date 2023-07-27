@@ -1,0 +1,59 @@
+deanon:
+  name: deanon
+  image:
+    tag: '{{ .Values.werf.tag.deanon }}'
+  service:
+    name: app
+    port: 8000
+    targetPort: app
+    ports:
+      - name: metrics
+        port: 9090
+        targetPort: metrics
+  ingress:
+    enabled: false
+  replicaCount: 1
+  workingDir: /app/packages/core
+  command: ["pnpm", "start"]
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  livenessProbe:
+    enabled: true
+    httpGet:
+        path: /health
+        port: app
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /health
+      port: app
+  containerPorts:
+    - name: app
+      containerPort: 8000
+    - name: metrics
+      containerPort: 9090
+  monitoring:
+    enabled: true
+    endpoints:
+      - port: metrics
+        path: /metrics
+  resources:
+    requests:
+      memory: "350Mi"
+      cpu: "50m"
+  envs:
+    PORT: 8000
+    KAFKA_TOPIC: 'deanon-wallets'
+    KAFKA_HIGH_PRIORITY_TOPIC: 'deanon-wallets-high-priority'
+    KAFKA_ENS_TOPIC: 'deanon-ens'
+    SCRAPER_URL: 'https://scraper-stage.k8s.superdao.dev'
+    ETH_NODE_URL: 'http://eth.superdao.dev'
+    ELASTIC_URL: 'https://10.156.0.41:9200'
+  useServices:
+    postgresql: true
+    kafka: true
+
+
